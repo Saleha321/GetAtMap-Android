@@ -7,6 +7,11 @@ workflows:
       events:
         - push
     scripts:
+      - name: Generate Missing Gradle Wrapper
+        script: |
+          cd "getatmap 1"
+          # Agar gradlew script missing hai to automatic standard wrapper generate karein
+          gradle wrapper
       - name: Set up local.properties
         script: |
           cd "getatmap 1"
