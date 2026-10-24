@@ -7,19 +7,32 @@ workflows:
       events:
         - push
     scripts:
-      - name: Generate Missing Gradle Wrapper
+      - name: Auto Generate Missing Framework Files
         script: |
-          cd "getatmap 1"
-          # Agar gradlew script missing hai to automatic standard wrapper generate karein
+          # 1. Create missing .env files required by secrets plugin
+          touch .env
+          touch .env.example
+          
+          # 2. Automatically generate the missing gradlew scripts
           gradle wrapper
+          
+          # 3. Create a temporary upload key so the build doesnt crash on signingConfig
+          keytool -genkey -v -keystore my-upload-key.jks \
+            -alias upload -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=GetAtMap, OU=Development, O=GetAtMap, L=Islamabad, S=Punjab, C=PK" \
+            -storepass "android" -keypass "android"
       - name: Set up local.properties
         script: |
-          cd "getatmap 1"
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
-      - name: Build Android APK
+          # Map temporary passwords to override env dependencies
+          export STORE_PASSWORD="android"
+          export KEY_PASSWORD="android"
+      - name: Build Android Debug APK
         script: |
-          cd "getatmap 1"
           chmod +x gradlew
+          export KEYSTORE_PATH="$PWD/my-upload-key.jks"
+          export STORE_PASSWORD="android"
+          export KEY_PASSWORD="android"
           ./gradlew assembleDebug
     artifacts:
-      - "getatmap 1/app/build/outputs/apk/debug/*.apk"
+      - "app/build/outputs/apk/debug/*.apk"
