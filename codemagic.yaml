@@ -9,12 +9,12 @@ workflows:
     scripts:
       - name: Set up local.properties
         script: |
-          cd $(find . -name "build.gradle.kts" -exec dirname {} \; | head -n 1)
+          cd "getatmap 1"
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
       - name: Build Android APK
         script: |
-          cd $(find . -name "build.gradle.kts" -exec dirname {} \; | head -n 1)
+          cd "getatmap 1"
           chmod +x gradlew
           ./gradlew assembleDebug
     artifacts:
-      - "**/build/outputs/apk/debug/*.apk"
+      - "getatmap 1/app/build/outputs/apk/debug/*.apk"
