@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>GetAtMap - Local Marketplace</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #f1f5f9; color: #0f172a; padding-bottom: 80px; }
+    header { background: #1e3a8a; color: white; padding: 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+    .badge { background: #10b981; color: white; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; }
+    .gps-banner { background: #0f172a; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #94a3b8; }
+    .gps-coords { color: #38bdf8; font-weight: bold; }
+    .search-box { margin-top: 10px; display: flex; gap: 8px; }
+    .search-input { flex: 1; padding: 12px 14px; border: none; border-radius: 8px; font-size: 14px; outline: none; background: white; }
+    .categories { display: flex; gap: 8px; overflow-x: auto; padding: 14px 16px; scrollbar-width: none; }
+    .category-chip { background: white; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; white-space: nowrap; color: #334155; }
+    .category-chip.active { background: #2563eb; color: white; border-color: #2563eb; }
+    .container { padding: 0 16px; }
+    .section-title { font-size: 16px; font-weight: 700; margin: 8px 0 14px 0; display: flex; justify-content: space-between; align-items: center; }
+    .listings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); display: flex; flex-direction: column; }
+    .card-img-placeholder { height: 110px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; }
+    .card-body { padding: 10px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-price { font-size: 16px; font-weight: 800; color: #1e3a8a; }
+    .card-title { font-size: 13px; font-weight: 600; margin: 4px 0; color: #1e293b; line-height: 1.3; }
+    .card-loc { font-size: 11px; color: #64748b; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    .actions { display: flex; gap: 6px; margin-top: 8px; }
+    .btn { flex: 1; padding: 6px 0; font-size: 11px; font-weight: 600; border-radius: 6px; text-align: center; text-decoration: none; cursor: pointer; border: none; }
+    .btn-call { background: #10b981; color: white; }
+    .btn-chat { background: #2563eb; color: white; }
+    .btn-map { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+    .post-ad-fab { position: fixed; bottom: 84px; right: 16px; background: #f59e0b; color: white; border-radius: 28px; padding: 14px 20px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); display: flex; align-items: center; gap: 8px; text-decoration: none; cursor: pointer; }
+    .test-box { background: white; border-radius: 12px; padding: 14px; margin-top: 16px; border: 1px dashed #94a3b8; }
+    .hidden-input { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <span>📍 GetAtMap</span>
+      <span class="badge">LIVE</span>
+    </div>
+    <button onclick="checkGpsBridge()" style="background:#3b82f6;color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;">Check GPS</button>
+  </div>
+  <div class="gps-banner">
+    <span>Device Location:</span>
+    <span class="gps-coords" id="coords-display">Fetching GPS coordinates...</span>
+  </div>
+  <div class="search-box">
+    <input type="text" class="search-input" placeholder="Find cars, mobiles, property nearby...">
+  </div>
+</header>
+
+<div class="categories">
+  <div class="category-chip active">All Listings</div>
+  <div class="category-chip">Cars &amp; Vehicles</div>
+  <div class="category-chip">Real Estate</div>
+  <div class="category-chip">Smartphones</div>
+  <div class="category-chip">Electronics</div>
+  <div class="category-chip">Jobs &amp; Services</div>
+</div>
+
+<div class="container">
+  <div class="section-title">
+    <span>Nearby Verified Listings</span>
+    <span style="font-size:12px;color:#2563eb;font-weight:600;">Within 5 km</span>
+  </div>
+
+  <div class="listings-grid">
+    <!-- Listing 1 -->
+    <div class="card">
+      <div class="card-img-placeholder" style="background:linear-gradient(135deg,#059669,#10b981);">🚗</div>
+      <div class="card-body">
+        <div>
+          <div class="card-price">$8,500</div>
+          <div class="card-title">2021 Sedan - Excellent Condition</div>
+          <div class="card-loc">📍 0.8 km away • Central District</div>
+        </div>
+        <div class="actions">
+          <a href="tel:+1234567890" class="btn btn-call">Call</a>
+          <a href="whatsapp://send?text=Hi, I am interested in your sedan on GetAtMap" class="btn btn-chat">Chat</a>
+          <button onclick="openMap(37.7749, -122.4194, '2021 Sedan')" class="btn btn-map">Map</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listing 2 -->
+    <div class="card">
+      <div class="card-img-placeholder" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">🏡</div>
+      <div class="card-body">
+        <div>
+          <div class="card-price">$1,400/mo</div>
+          <div class="card-title">Modern 2 BHK Apartment for Rent</div>
+          <div class="card-loc">📍 1.4 km away • West Avenue</div>
+        </div>
+        <div class="actions">
+          <a href="tel:+1234567891" class="btn btn-call">Call</a>
+          <a href="whatsapp://send?text=Inquiring about 2 BHK apartment on GetAtMap" class="btn btn-chat">Chat</a>
+          <button onclick="openMap(37.7849, -122.4094, 'Apartment')" class="btn btn-map">Map</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listing 3 -->
+    <div class="card">
+      <div class="card-img-placeholder" style="background:linear-gradient(135deg,#ea580c,#f97316);">📱</div>
+      <div class="card-body">
+        <div>
+          <div class="card-price">$520</div>
+          <div class="card-title">Smartphone Pro 256GB with Box</div>
+          <div class="card-loc">📍 2.1 km away • Tech Market</div>
+        </div>
+        <div class="actions">
+          <a href="tel:+1234567892" class="btn btn-call">Call</a>
+          <a href="whatsapp://send?text=Interested in Smartphone Pro" class="btn btn-chat">Chat</a>
+          <button onclick="openMap(37.7949, -122.3994, 'Tech Market')" class="btn btn-map">Map</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listing 4 -->
+    <div class="card">
+      <div class="card-img-placeholder" style="background:linear-gradient(135deg,#0284c7,#0ea5e9);">🛋️</div>
+      <div class="card-body">
+        <div>
+          <div class="card-price">$260</div>
+          <div class="card-title">Comfortable Recliner Sofa</div>
+          <div class="card-loc">📍 3.0 km away • North Heights</div>
+        </div>
+        <div class="actions">
+          <a href="tel:+1234567893" class="btn btn-call">Call</a>
+          <a href="whatsapp://send?text=Interested in Recliner" class="btn btn-chat">Chat</a>
+          <button onclick="openMap(37.8049, -122.3894, 'North Heights')" class="btn btn-map">Map</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Bridge Test Box -->
+  <div class="test-box">
+    <h4 style="font-size:13px;margin-bottom:6px;color:#1e3a8a;">Native Bridge &amp; Geolocation Status</h4>
+    <p style="font-size:12px;color:#475569;margin-bottom:8px;">This web view is connected to the native Android GPS provider and file upload pipeline.</p>
+    <div style="display:flex;gap:8px;">
+      <button onclick="requestHtml5Geo()" style="padding:6px 12px;background:#1e3a8a;color:white;border:none;border-radius:6px;font-size:12px;">Test HTML5 Geolocation</button>
+      <button onclick="document.getElementById('photo-upload').click()" style="padding:6px 12px;background:#059669;color:white;border:none;border-radius:6px;font-size:12px;">Test Image Upload</button>
+    </div>
+    <input type="file" id="photo-upload" class="hidden-input" accept="image/*" onchange="alert('Image selected: ' + this.files[0]?.name)">
+  </div>
+</div>
+
+<label for="photo-upload" class="post-ad-fab">
+  <span>+</span>
+  <span>Post Ad</span>
+</label>
+
+<script>
+  function checkGpsBridge() {
+    if (window.AndroidLocation) {
+      var lat = window.AndroidLocation.getLatitude();
+      var lng = window.AndroidLocation.getLongitude();
+      var isGps = window.AndroidLocation.isGpsEnabled();
+      if (lat && lng && lat !== 0) {
+        document.getElementById('coords-display').innerText = lat.toFixed(4) + ", " + lng.toFixed(4) + " (GPS: Active)";
+      } else {
+        document.getElementById('coords-display').innerText = "GPS Enabled (Waiting for lock)";
+      }
+      if (window.AndroidLocation.showToast) {
+        window.AndroidLocation.showToast("GPS Bridge Connected: " + lat.toFixed(4) + ", " + lng.toFixed(4));
+      }
+    } else {
+      document.getElementById('coords-display').innerText = "Bridge not found";
+    }
+  }
+
+  function openMap(lat, lng, label) {
+    if (window.AndroidLocation && window.AndroidLocation.openNavigation) {
+      window.AndroidLocation.openNavigation(lat, lng, label);
+    } else {
+      window.open("https://maps.google.com/?q=" + lat + "," + lng);
+    }
+  }
+
+  function requestHtml5Geo() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        alert("HTML5 Geolocation Success!\nLat: " + pos.coords.latitude + "\nLng: " + pos.coords.longitude);
+      }, function(err) {
+        alert("HTML5 Geolocation Error: " + err.message);
+      });
+    } else {
+      alert("HTML5 Geolocation not supported");
+    }
+  }
+
+  // Auto initialize on load
+  window.addEventListener('load', function() {
+    setTimeout(checkGpsBridge, 500);
+  });
+</script>
+
+</body>
+</html>

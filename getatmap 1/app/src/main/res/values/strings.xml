@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">GetAtMap</string>
+    <string name="gps_required_title">Location Required</string>
+    <string name="gps_required_desc">GetAtMap requires GPS location services to be turned on to discover nearby listings, map locations, and verified services.</string>
+    <string name="enable_gps_button">Enable Location / GPS</string>
+    <string name="grant_permission_button">Grant Location Permission</string>
+    <string name="coming_soon_title">Launching Soon!</string>
+    <string name="coming_soon_desc">GetAtMap web platform is currently being prepared for prime time. Check back soon or try refreshing.</string>
+    <string name="refresh_page">Refresh</string>
+    <string name="exit_app">Exit</string>
+    <string name="share_app">Share Link</string>
+</resources>

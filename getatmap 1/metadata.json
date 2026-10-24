@@ -1,0 +1,6 @@
+{
+  "name": "GetAtMap",
+  "description": "WebView wrapper application for GetAtMap with mandatory GPS verification, deep linking, and Coming Soon status mode.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
