@@ -2,16 +2,19 @@ workflows:
   android-release:
     name: GetAtMap Android APK Release
     max_build_duration: 30
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     triggering:
       events:
         - push
     scripts:
       - name: Set up local.properties
         script: |
+          cd $(find . -name "build.gradle.kts" -exec dirname {} \; | head -n 1)
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
       - name: Build Android APK
         script: |
+          cd $(find . -name "build.gradle.kts" -exec dirname {} \; | head -n 1)
+          chmod +x gradlew
           ./gradlew assembleDebug
     artifacts:
-      - app/build/outputs/apk/debug/*.apk
+      - "**/build/outputs/apk/debug/*.apk"
